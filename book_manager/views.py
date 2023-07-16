@@ -1,3 +1,4 @@
+from django.core.paginator import Paginator
 from django.shortcuts import render, redirect
 from .models import Book
 
@@ -9,8 +10,12 @@ def book_list(request):
         books = Book.objects.filter(title__icontains=query) | Book.objects.filter(genre__icontains=query)
     else:
         books = Book.objects.all()
-    return render(request, 'book_manager/book_list.html', {'books': books})
+    paginator = Paginator(books, 10)  # Show 10 books per page
 
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    return render(request, 'book_manager/book_list.html', {'page_obj': page_obj})
 
 def add_book(request):
     if request.method == 'POST':
