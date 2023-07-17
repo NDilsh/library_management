@@ -5,6 +5,7 @@ from .models import Book
 
 def book_list(request):
     query = request.GET.get('q')
+    search_value = query if query else ''
 
     if query:
         books = Book.objects.filter(title__icontains=query) | Book.objects.filter(genre__icontains=query)
@@ -15,7 +16,7 @@ def book_list(request):
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 
-    return render(request, 'book_manager/book_list.html', {'page_obj': page_obj})
+    return render(request, 'book_manager/book_list.html', {'page_obj': page_obj, 'search_value': search_value})
 
 def add_book(request):
     if request.method == 'POST':
